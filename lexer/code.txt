@@ -8,7 +8,6 @@ BEGIN
 	BOOL u; BOOL v; NUM i; NUM j; REAL v; REAL x; REAL[100] a;
 	PRINT "ProgLang";
 	READ i;
-	
 	k = 2.0;	// Implicit typing
 	m = 3;		// Implicit typing
 	q = TRUE;	// Implicit typing
