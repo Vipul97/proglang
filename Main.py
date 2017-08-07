@@ -7,7 +7,6 @@ class Main:
         lex = Lexer()           # create lexical analyzer
         parse = Parser(lex)     # create parser
         parse.program()         # call method program in the parser
-        print '\nSyntax Analysis Successful!\n'
+        print '\n'
 
-a = Main()
-Main.main(a)
+Main.main(Main())

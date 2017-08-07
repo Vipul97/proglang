@@ -27,4 +27,3 @@ class Tag:
     TEMP    = 281
     TRUE    = 282
     WHILE   = 283
-
