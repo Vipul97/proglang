@@ -61,14 +61,16 @@ class Lexer:
                     self.line += 1
 
                 elif self.peek == '*':
-                    while not self.readch('*'):
+                    while True:
+                        self.peek = code.read(1)
                         if not self.peek:
                             print "Syntax Error: Missing '*/'"
                             exit()
-
-                        if self.peek == '\n':
+                        elif self.peek == '\n':
                             self.line += 1
-                    self.readch('/')
+                        elif self.peek == '*':
+                            if self.readch('/'):
+                                break
 
             if self.peek == '"':
                 while not self.readch('"'):
