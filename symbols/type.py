@@ -2,13 +2,13 @@ from lexer.word import *
 
 
 class Type(Word):
-
     def __init__(self, s, tag):
         super(Type, self).__init__(s, tag)
 
     def numeric(self, p):
-        if p == CHAR or p == NUM or p == REAL:
+        if p in [CHAR, NUM, REAL]:
             return True
+
         return False
 
     def max(self, p1, p2):
@@ -21,7 +21,8 @@ class Type(Word):
         else:
             return CHAR
 
-NUM     = Type("NUM",   Tag.BASIC)
-REAL    = Type("REAL", Tag.BASIC)
-CHAR    = Type("CHAR",  Tag.BASIC)
-BOOL    = Type("BOOL",  Tag.BASIC)
+
+NUM = Type('NUM', Tag.BASIC)
+REAL = Type('REAL', Tag.BASIC)
+CHAR = Type('CHAR', Tag.BASIC)
+BOOL = Type('BOOL', Tag.BASIC)

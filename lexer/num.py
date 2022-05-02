@@ -1,5 +1,5 @@
-from lexer.token import *
 from lexer.tag import *
+from lexer.token import *
 
 
 class Num(Token, object):

@@ -1,9 +1,10 @@
-from lexer.word import *
-from symbols.type import *
 from lexer.num import *
 from lexer.real import *
+from lexer.word import *
+from symbols.type import *
+import sys
 
-code = open("lexer/code.txt", 'r')
+code = open('lexer/code.txt', 'r')
 
 
 class Lexer:
@@ -15,21 +16,21 @@ class Lexer:
         self.words[w.lexeme] = w
 
     def __init__(self):
-        self.reserve(Word("DEFINE",     Tag.DEFINE))
-        self.reserve(Word("RECORD",     Tag.RECORD))
-        self.reserve(Word("BEGIN",      Tag.BEGIN))
-        self.reserve(Word("END",        Tag.END))
-        self.reserve(Word("OR",         Tag.OR))
-        self.reserve(Word("AND",        Tag.AND))
-        self.reserve(Word("NOT",        Tag.NOT))
-        self.reserve(Word("IF",         Tag.IF))
-        self.reserve(Word("ELSE",       Tag.ELSE))
-        self.reserve(Word("WHILE",      Tag.WHILE))
-        self.reserve(Word("DO",         Tag.DO))
-        self.reserve(Word("BREAK",      Tag.BREAK))
-        self.reserve(Word("PRINT",      Tag.PRINT))
-        self.reserve(Word("READ",       Tag.READ))
-        self.reserve(Word("RETURN",     Tag.RETURN))
+        self.reserve(Word('DEFINE', Tag.DEFINE))
+        self.reserve(Word('RECORD', Tag.RECORD))
+        self.reserve(Word('BEGIN', Tag.BEGIN))
+        self.reserve(Word('END', Tag.END))
+        self.reserve(Word('OR', Tag.OR))
+        self.reserve(Word('AND', Tag.AND))
+        self.reserve(Word('NOT', Tag.NOT))
+        self.reserve(Word('IF', Tag.IF))
+        self.reserve(Word('ELSE', Tag.ELSE))
+        self.reserve(Word('WHILE', Tag.WHILE))
+        self.reserve(Word('DO', Tag.DO))
+        self.reserve(Word('BREAK', Tag.BREAK))
+        self.reserve(Word('PRINT', Tag.PRINT))
+        self.reserve(Word('READ', Tag.READ))
+        self.reserve(Word('RETURN', Tag.RETURN))
         self.reserve(TRUE)
         self.reserve(FALSE)
         self.reserve(NUM)
@@ -43,10 +44,12 @@ class Lexer:
 
         else:
             self.readch()
+
             if self.peek != c:
                 return False
 
             self.peek = ' '
+
             return True
 
     def scan(self):
@@ -55,19 +58,24 @@ class Lexer:
 
             if self.peek == '/':
                 self.peek = code.read(1)
+
                 if self.peek == '/':
                     while not self.readch('\n'):
                         continue
+
                     self.line += 1
 
                 elif self.peek == '*':
                     while True:
                         self.peek = code.read(1)
+
                         if not self.peek:
-                            print("Syntax Error: Missing '*/'")
-                            exit()
+                            print('Syntax Error: Missing "*/"')
+                            sys.exit()
+
                         elif self.peek == '\n':
                             self.line += 1
+
                         elif self.peek == '*':
                             if self.readch('/'):
                                 break
@@ -75,8 +83,8 @@ class Lexer:
             if self.peek == '"':
                 while not self.readch('"'):
                     if not self.peek:
-                        print("Syntax Error: Missing '\"'")
-                        exit()
+                        print('Syntax Error: Missing "\""')
+                        sys.exit()
 
             if self.peek == ' ' or self.peek == '\t':
                 continue
@@ -94,29 +102,37 @@ class Lexer:
         elif self.peek == '=':
             if self.readch('='):
                 return eq
+
             else:
                 code.seek(code.tell() - 1)
+
                 return Token('=')
 
         elif self.peek == '!':
             if self.readch('='):
                 return ne
+
             else:
                 code.seek(code.tell() - 1)
+
                 return Token('!')
 
         elif self.peek == '<':
             if self.readch('='):
                 return le
+
             else:
                 code.seek(code.tell() - 1)
+
                 return Token('<')
 
         elif self.peek == '>':
             if self.readch('='):
                 return ge
+
             else:
                 code.seek(code.tell() - 1)
+
                 return Token('>')
 
         if self.peek.isdigit():
@@ -131,6 +147,7 @@ class Lexer:
 
             if self.peek != '.':
                 code.seek(code.tell() - 1)
+
                 return Num(v)
 
             x = v
@@ -146,6 +163,7 @@ class Lexer:
                 d *= 10
 
             code.seek(code.tell() - 1)
+
             return Real(x)
 
         if self.peek.isalpha():
@@ -159,12 +177,15 @@ class Lexer:
             code.seek(code.tell() - 1)
             if s in self.words:
                 w = self.words[s]
+
                 return w
 
             w = Word(s, Tag.ID)
             self.words[s] = w
+
             return w
 
         tok = Token(self.peek)
         self.peek = ' '
+
         return tok

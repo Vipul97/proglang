@@ -1,14 +1,15 @@
+from inter.expr import *
 from symbols.array import *
 from symbols.env import *
 from symbols.type import *
-from inter.expr import *
+import sys
 
 
 class Parser:
     __lex = None
     __look = None
     top = None
-    Enclosing = False
+    enclosing = False
 
     def __init__(self, l):
         self.__lex = l
@@ -18,16 +19,17 @@ class Parser:
         self.__look = self.__lex.scan()
 
     def error(self, s):
-        print("\nnear line " + str(self.__lex.line) + ": " + s)
-        exit()
+        print()
+        print(f'near line {str(self.__lex.line)}: {s}')
+        sys.exit()
 
     def match(self, t):
         if self.__look.tag == t:
             self.move()
         else:
-            self.error("syntax error, expected '" + str(t) + "', got '" + str(self.__look.lexeme) + "'")
+            self.error(f'syntax error, expected {str(t)}, got "{str(self.__look.lexeme)}"')
 
-    def Setcheck(self, p1, p2):
+    def set_check(self, p1, p2):
         if Type.numeric(p1, p1) and Type.numeric(p2, p2):
             return p2
         elif p1 == BOOL and p2 == BOOL:
@@ -35,7 +37,7 @@ class Parser:
         else:
             return None
 
-    def SetElemcheck(self, p1, p2):
+    def set_elemcheck(self, p1, p2):
         if isinstance(p1, Array) or isinstance(p2, Array):
             return None
         elif p1 == p2:
@@ -54,34 +56,34 @@ class Parser:
         self.match(Tag.BASIC)
         self.match(Tag.ID)
         self.match('(')
-        savedEnv = self.top
+        saved_env = self.top
         self.top = Env(self.top)
         self.decls()
         self.match(')')
         self.block()
-        self.top = savedEnv
+        self.top = saved_env
         self.program()
 
     def block(self):
         self.match(Tag.BEGIN)
-        savedEnv = self.top
+        saved_env = self.top
         self.top = Env(self.top)
         self.decls()
         self.stmts()
         self.match(Tag.END)
-        self.top = savedEnv
+        self.top = saved_env
         self.program()
 
     def decls(self):
         while self.__look.tag == Tag.BASIC:
-            p = self.type1()
+            p = self.type_1()
             tok = self.__look
             self.match(Tag.ID)
             self.match(';')
-            id1 = Expr(tok, p)
-            self.top.put(tok, id1)
+            id_1 = Expr(tok, p)
+            self.top.put(tok, id_1)
 
-    def type1(self):
+    def type_1(self):
         p = self.__look
         self.match(Tag.BASIC)
 
@@ -115,52 +117,52 @@ class Parser:
         elif self.__look.tag == Tag.IF:
             self.match(Tag.IF)
             self.match('(')
-            x = self.bool1()
+            x = self.bool_1()
             self.match(')')
             self.stmt()
 
-            if x.type1 != BOOL:
-                self.error("boolean required in if")
+            if x.type_1 != BOOL:
+                self.error('boolean required in if')
 
             if self.__look.tag == Tag.ELSE:
                 self.match(Tag.ELSE)
                 self.stmt()
 
         elif self.__look.tag == Tag.WHILE:
-            savedStmt = self.Enclosing
-            self.Enclosing = True
+            saved_stmt = self.enclosing
+            self.enclosing = True
             self.match(Tag.WHILE)
             self.match('(')
-            x = self.bool1()
+            x = self.bool_1()
             self.match(')')
             self.stmt()
 
-            if x.type1 != BOOL:
-                self.error("boolean required in while")
+            if x.type_1 != BOOL:
+                self.error('boolean required in while')
 
-            self.Enclosing = savedStmt
+            self.enclosing = saved_stmt
 
         elif self.__look.tag == Tag.DO:
-            savedStmt = self.Enclosing
+            saved_stmt = self.enclosing
             self.match(Tag.DO)
             self.stmt()
             self.match(Tag.WHILE)
             self.match('(')
-            x = self.bool1()
+            x = self.bool_1()
             self.match(')')
             self.match(';')
 
-            if x.type1 != BOOL:
-                self.error("boolean required in do")
+            if x.type_1 != BOOL:
+                self.error('boolean required in do')
 
-            self.Enclosing = savedStmt
+            self.enclosing = saved_stmt
 
         elif self.__look.tag == Tag.BREAK:
             self.match(Tag.BREAK)
             self.match(';')
 
-            if not self.Enclosing:
-                self.error("unenclosed break")
+            if not self.enclosing:
+                self.error('unenclosed break')
 
         elif self.__look.tag == Tag.PRINT:
             self.match(Tag.PRINT)
@@ -168,10 +170,10 @@ class Parser:
 
             if t.tag == Tag.ID:
                 self.match(Tag.ID)
-                id1 = self.top.get(t)
+                id_1 = self.top.get(t)
 
-                if not id1:
-                    self.error(t.toString() + " undeclared")
+                if not id_1:
+                    self.error(f'{t.toString()} undeclared')
 
             self.match(';')
 
@@ -179,10 +181,10 @@ class Parser:
             self.match(Tag.READ)
             t = self.__look
             self.match(Tag.ID)
-            id1 = self.top.get(t)
+            id_1 = self.top.get(t)
 
-            if not id1:
-                self.error(t.toString() + " undeclared")
+            if not id_1:
+                self.error(f'{t.toString()} undeclared')
 
             self.match(';')
 
@@ -191,7 +193,7 @@ class Parser:
 
         elif self.__look.tag == Tag.RETURN:
             self.match(Tag.RETURN)
-            self.bool1()
+            self.bool_1()
             self.match(';')
 
         else:
@@ -200,48 +202,48 @@ class Parser:
     def assign(self):
         t = self.__look
         self.match(Tag.ID)
-        id1 = self.top.get(t)
+        id_1 = self.top.get(t)
 
-        if not id1:
+        if not id_1:
             self.move()
 
             if self.__look.tag == Tag.NUM:
-                id1 = Expr(t, NUM)
+                id_1 = Expr(t, NUM)
             elif self.__look.tag == Tag.REAL:
-                id1 = Expr(t, REAL)
+                id_1 = Expr(t, REAL)
             elif self.__look.tag == CHAR:
-                id1 = Expr(t, CHAR)
-            elif self.__look.tag == Tag.TRUE or self.__look.tag == Tag.FALSE:
-                id1 = Expr(t, BOOL)
+                id_1 = Expr(t, CHAR)
+            elif self.__look.tag in [Tag.TRUE, Tag.FALSE]:
+                id_1 = Expr(t, BOOL)
 
-            self.top.put(t, id1)
-            y = self.bool1()
+            self.top.put(t, id_1)
+            y = self.bool_1()
 
-            if not self.Setcheck(id1.type1, y.type1):
-                self.error("type error")
+            if not self.set_check(id_1.type_1, y.type_1):
+                self.error('type error')
 
             self.match(';')
 
         elif self.__look.tag == '=':
             self.move()
-            y = self.bool1()
+            y = self.bool_1()
 
-            if not self.Setcheck(id1.type1, y.type1):
-                self.error("type error")
+            if not self.set_check(id_1.type_1, y.type_1):
+                self.error('type error')
 
             self.match(';')
 
         else:
-            x = self.offset(id1)
+            x = self.offset(id_1)
             self.match('=')
-            y = self.bool1()
+            y = self.bool_1()
 
-            if not self.SetElemcheck(x.type1, y.type1):
-                self.error("type error")
+            if not self.set_elemcheck(x.type_1, y.type_1):
+                self.error('type error')
 
             self.match(';')
 
-    def bool1(self):
+    def bool_1(self):
         x = self.join()
 
         while self.__look.tag == Tag.OR:
@@ -266,10 +268,11 @@ class Parser:
     def equality(self):
         x = self.rel()
 
-        while self.__look.tag == Tag.EQ or self.__look.tag == Tag.NE:
+        while self.__look.tag in [Tag.EQ, Tag.NE]:
             tok = self.__look
             self.move()
             self.rel()
+
             return Expr(tok, BOOL)
 
         return x
@@ -277,14 +280,14 @@ class Parser:
     def rel(self):
         x = self.expr()
 
-        if self.__look.tag == '<' or self.__look.tag == Tag.LE or self.__look.tag == Tag.GE or self.__look.tag == '>':
+        if self.__look.tag in ['<', Tag.LE, Tag.GE, '>']:
             tok = self.__look
             self.move()
             y = self.expr()
-            type1 = Type.max(x.type1, x.type1, y.type1)
+            type_1 = Type.max(x.type_1, x.type_1, y.type_1)
 
-            if not type1:
-                self.error("type error")
+            if not type_1:
+                self.error('type error')
 
             return Expr(tok, BOOL)
 
@@ -294,26 +297,26 @@ class Parser:
     def expr(self):
         x = self.term()
 
-        while self.__look.tag == '+' or self.__look.tag == '-':
+        while self.__look.tag in ['+', '-']:
             self.move()
             y = self.term()
-            type1 = Type.max(x.type1, x.type1, y.type1)
+            type_1 = Type.max(x.type_1, x.type_1, y.type_1)
 
-            if not type1:
-                self.error("type error")
+            if not type_1:
+                self.error('type error')
 
         return x
 
     def term(self):
         x = self.unary()
 
-        while self.__look.tag == '*' or self.__look.tag == '/':
+        while self.__look.tag in ['*', '/']:
             self.move()
             y = self.unary()
-            type1 = Type.max(x.type1, x.type1, y.type1)
+            type_1 = Type.max(x.type_1, x.type_1, y.type_1)
 
-            if not type1:
-                self.error("type error")
+            if not type_1:
+                self.error('type error')
 
         return x
 
@@ -321,15 +324,16 @@ class Parser:
         if self.__look.tag == '-':
             self.move()
             x = self.unary()
-            type1 = Type.max(x.type1, NUM, x.type1)
+            type_1 = Type.max(x.type_1, NUM, x.type_1)
 
-            if not type1:
-                self.error("type error")
+            if not type_1:
+                self.error('type error')
 
         elif self.__look.tag == Tag.NOT:
             tok = self.__look
             self.move()
             self.unary()
+
             return Expr(tok, BOOL)
 
         else:
@@ -340,58 +344,64 @@ class Parser:
 
         if self.__look.tag == '(':
             self.move()
-            x = self.bool1()
+            x = self.bool_1()
             self.match(')')
+
             return x
 
         elif self.__look.tag == Tag.NUM:
             x = Expr(Num(self.__look), NUM)
             self.move()
+
             return x
 
         elif self.__look.tag == Tag.REAL:
             x = Expr(Num(self.__look), REAL)
             self.move()
+
             return x
 
         elif self.__look.tag == Tag.TRUE:
             x = true
             self.move()
+
             return x
 
         elif self.__look.tag == Tag.FALSE:
             x = false
             self.move()
+
             return x
 
         elif self.__look.tag == Tag.ID:
-            id1 = self.top.get(self.__look)
+            id_1 = self.top.get(self.__look)
 
-            if not id1:
-                self.error(self.__look.toString() + " undeclared")
+            if not id_1:
+                self.error(f'{self.__look.toString()} undeclared')
 
             self.move()
 
             if self.__look.tag != '[':
-                return id1
+                return id_1
             else:
-                return self.offset(id1)
+                return self.offset(id_1)
 
         else:
-            self.error("syntax error, expected a factor, got '" + str(self.__look.tag) + "'")
+            self.error(f'syntax error, expected a factor, got "{str(self.__look.tag)}"')
+
             return x
 
     def offset(self, a):
-        type1 = a.type1
+        type_1 = a.type_1
         self.match('[')
-        self.bool1()
+        self.bool_1()
         self.match(']')
-        type1 = type1.of
+        type_1 = type_1.of
 
         while self.__look.tag == '[':
             self.match('[')
-            self.bool1()
+            self.bool_1()
             self.match(']')
-            type1 = type1.of
+            type_1 = type_1.of
 
-        return Expr(Word("[]", Tag.INDEX), type1)
+        return Expr(Word('[]', Tag.INDEX), type_1)
