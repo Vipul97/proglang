@@ -1,5 +1,5 @@
-from lexer.Token import *
-from lexer.Tag import *
+from lexer.token import *
+from lexer.tag import *
 
 
 class Word(Token, object):

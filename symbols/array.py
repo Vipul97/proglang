@@ -1,4 +1,4 @@
-from symbols.Type import *
+from symbols.type import *
 
 
 class Array(Type):

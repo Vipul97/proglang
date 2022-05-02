@@ -1,4 +1,4 @@
-from lexer.Lexer import *
+from lexer.lexer import *
 
 
 class Expr:

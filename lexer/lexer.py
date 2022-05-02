@@ -1,7 +1,7 @@
-from lexer.Word import *
-from symbols.Type import *
-from lexer.Num import *
-from lexer.Real import *
+from lexer.word import *
+from symbols.type import *
+from lexer.num import *
+from lexer.real import *
 
 code = open("lexer/code.txt", 'r')
 
@@ -64,7 +64,7 @@ class Lexer:
                     while True:
                         self.peek = code.read(1)
                         if not self.peek:
-                            print "Syntax Error: Missing '*/'"
+                            print("Syntax Error: Missing '*/'")
                             exit()
                         elif self.peek == '\n':
                             self.line += 1
@@ -75,7 +75,7 @@ class Lexer:
             if self.peek == '"':
                 while not self.readch('"'):
                     if not self.peek:
-                        print "Syntax Error: Missing '\"'"
+                        print("Syntax Error: Missing '\"'")
                         exit()
 
             if self.peek == ' ' or self.peek == '\t':

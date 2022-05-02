@@ -1,7 +1,7 @@
-from symbols.Array import *
-from symbols.Env import *
-from symbols.Type import *
-from inter.Expr import *
+from symbols.array import *
+from symbols.env import *
+from symbols.type import *
+from inter.expr import *
 
 
 class Parser:
@@ -18,7 +18,7 @@ class Parser:
         self.__look = self.__lex.scan()
 
     def error(self, s):
-        print "\nnear line " + str(self.__lex.line) + ": " + s
+        print("\nnear line " + str(self.__lex.line) + ": " + s)
         exit()
 
     def match(self, t):

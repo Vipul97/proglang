@@ -1,4 +1,4 @@
-from lexer.Word import *
+from lexer.word import *
 
 
 class Type(Word):
