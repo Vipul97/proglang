@@ -1,13 +1,18 @@
 # ProgLang
-Created a new programming language by implementing Grammar and Syntax Analyzer in Python 2.7.12.
+
+Syntax Analyzer for a Custom Grammar in Python 3.10.
 
 ## Grammar
-BNF grammar for ProgLang can be found in grammar.txt.
+
+BNF grammar can be found in `grammar.txt`.
 
 ## Input Source Code
-Input source code for ProgLang can be edited in lexer/code.txt.
+
+Input source code can be edited in `lexer/code.txt`.
 
 ## Instructions
-To execute the Syntax Analyzer, run Main.py.
 
-The Syntax Analyzer will report errors on the standard output if found any, and will display nothing if no errors are found.
+To run the Syntax Analyzer, run `Main.py`.
+
+The Syntax Analyzer will not display any output if the program has run successfully, and will display if any errors are
+found.
