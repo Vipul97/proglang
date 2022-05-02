@@ -1,26 +1,25 @@
-program ::= func | e
-func	::= DEFINE type id ( decls ) block program
-block	::= BEGIN decls stmts END program
-decls	::= decls decl | e
-decl	::= type id;
-type	::= type [ num ] | basic
-stmts	::= stmts stmt | e
-stmt	::= id = bool;
-	 |  decls
-	 |  IF ( bool ) stmt |  IF ( bool ) stmt ELSE stmt
-	 |  WHILE ( bool ) stmt
-	 |  DO stmt WHILE ( bool );
-	 |  BREAK;
-	 |  PRINT lit;
-	 |  READ id;
-	 |  block
-	 |  RETURN bool;
-bool	::= bool OR join | join
-join	::= join AND equality | equality
+program  ::= func | ε
+func	 ::= DEFINE type id ( decls ) block program
+block	 ::= BEGIN decls stmts END program
+decls	 ::= decls decl | ε
+decl	 ::= type id;
+type	 ::= type [ num ] | basic
+stmts	 ::= stmts stmt | ε
+stmt	 ::= id = bool;
+          |  decls
+          |  IF ( bool ) stmt |  IF ( bool ) stmt ELSE stmt
+          |  WHILE ( bool ) stmt
+          |  DO stmt WHILE ( bool );
+          |  BREAK;
+          |  PRINT lit;
+          |  READ id;
+          |  block
+          |  RETURN bool;
+bool	 ::= bool OR join | join
+join	 ::= join AND equality | equality
 equality ::= equality == rel | equality != rel | rel
-rel	::= expr < expr | expr <= expr | expr >= expr |
-		expr > expr | expr
-expr	::= expr + term | expr - term | term
-term	::= term * unary | term / unary | unary
-unary	::= NOT unary | - unary | factor
-factor	::= ( bool ) | id | num | real | true | false
+rel	     ::= expr < expr | expr <= expr | expr >= expr | expr > expr | expr
+expr	 ::= expr + term | expr - term | term
+term	 ::= term * unary | term / unary | unary
+unary	 ::= NOT unary | - unary | factor
+factor	 ::= ( bool ) | id | num | real | true | false
