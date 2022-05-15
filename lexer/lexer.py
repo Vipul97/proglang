@@ -4,18 +4,14 @@ from lexer.word import *
 from symbols.type import *
 import sys
 
-code = open('lexer/code.txt', 'r')
-
 
 class Lexer:
-    line = 1
-    peek = ' '
-    words = {}
-
-    def reserve(self, w):
-        self.words[w.lexeme] = w
-
     def __init__(self):
+        self.code = open('lexer/code.txt', 'r')
+        self.line = 1
+        self.peek = ' '
+
+        self.words = {}
         self.reserve(Word('DEFINE', Tag.DEFINE))
         self.reserve(Word('RECORD', Tag.RECORD))
         self.reserve(Word('BEGIN', Tag.BEGIN))
@@ -38,9 +34,12 @@ class Lexer:
         self.reserve(BOOL)
         self.reserve(REAL)
 
+    def reserve(self, w):
+        self.words[w.lexeme] = w
+
     def readch(self, c=None):
         if c is None:
-            self.peek = code.read(1)
+            self.peek = self.code.read(1)
 
         else:
             self.readch()
@@ -57,7 +56,7 @@ class Lexer:
             self.readch()
 
             if self.peek == '/':
-                self.peek = code.read(1)
+                self.peek = self.code.read(1)
 
                 if self.peek == '/':
                     while not self.readch('\n'):
@@ -67,7 +66,7 @@ class Lexer:
 
                 elif self.peek == '*':
                     while True:
-                        self.peek = code.read(1)
+                        self.peek = self.code.read(1)
 
                         if not self.peek:
                             print('Syntax Error: Missing "*/"')
@@ -104,7 +103,7 @@ class Lexer:
                 return eq
 
             else:
-                code.seek(code.tell() - 1)
+                self.code.seek(self.code.tell() - 1)
 
                 return Token('=')
 
@@ -113,7 +112,7 @@ class Lexer:
                 return ne
 
             else:
-                code.seek(code.tell() - 1)
+                self.code.seek(self.code.tell() - 1)
 
                 return Token('!')
 
@@ -122,7 +121,7 @@ class Lexer:
                 return le
 
             else:
-                code.seek(code.tell() - 1)
+                self.code.seek(self.code.tell() - 1)
 
                 return Token('<')
 
@@ -131,7 +130,7 @@ class Lexer:
                 return ge
 
             else:
-                code.seek(code.tell() - 1)
+                self.code.seek(self.code.tell() - 1)
 
                 return Token('>')
 
@@ -146,7 +145,7 @@ class Lexer:
                 self.readch()
 
             if self.peek != '.':
-                code.seek(code.tell() - 1)
+                self.code.seek(self.code.tell() - 1)
 
                 return Num(v)
 
@@ -162,7 +161,7 @@ class Lexer:
                 x += float(self.peek) / d
                 d *= 10
 
-            code.seek(code.tell() - 1)
+            self.code.seek(self.code.tell() - 1)
 
             return Real(x)
 
@@ -174,7 +173,7 @@ class Lexer:
                 s += self.peek
                 self.readch()
 
-            code.seek(code.tell() - 1)
+            self.code.seek(self.code.tell() - 1)
             if s in self.words:
                 w = self.words[s]
 
