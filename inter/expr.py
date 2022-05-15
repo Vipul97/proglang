@@ -3,11 +3,11 @@ from lexer.lexer import *
 
 class Expr:
     op = None
-    type_1 = None
+    type_ = None
 
     def __init__(self, tok, p):
         self.op = tok
-        self.type_1 = p
+        self.type_ = p
 
 
 true = Expr(TRUE, BOOL)

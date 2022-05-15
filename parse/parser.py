@@ -76,14 +76,14 @@ class Parser:
 
     def decls(self):
         while self.__look.tag == Tag.BASIC:
-            p = self.type_1()
+            p = self.type_()
             tok = self.__look
             self.match(Tag.ID)
             self.match(';')
-            id_1 = Expr(tok, p)
-            self.top.put(tok, id_1)
+            id_ = Expr(tok, p)
+            self.top.put(tok, id_)
 
-    def type_1(self):
+    def type_(self):
         p = self.__look
         self.match(Tag.BASIC)
 
@@ -117,11 +117,11 @@ class Parser:
         elif self.__look.tag == Tag.IF:
             self.match(Tag.IF)
             self.match('(')
-            x = self.bool_1()
+            x = self.bool_()
             self.match(')')
             self.stmt()
 
-            if x.type_1 != BOOL:
+            if x.type_ != BOOL:
                 self.error('boolean required in if')
 
             if self.__look.tag == Tag.ELSE:
@@ -133,11 +133,11 @@ class Parser:
             self.enclosing = True
             self.match(Tag.WHILE)
             self.match('(')
-            x = self.bool_1()
+            x = self.bool_()
             self.match(')')
             self.stmt()
 
-            if x.type_1 != BOOL:
+            if x.type_ != BOOL:
                 self.error('boolean required in while')
 
             self.enclosing = saved_stmt
@@ -148,11 +148,11 @@ class Parser:
             self.stmt()
             self.match(Tag.WHILE)
             self.match('(')
-            x = self.bool_1()
+            x = self.bool_()
             self.match(')')
             self.match(';')
 
-            if x.type_1 != BOOL:
+            if x.type_ != BOOL:
                 self.error('boolean required in do')
 
             self.enclosing = saved_stmt
@@ -170,9 +170,9 @@ class Parser:
 
             if t.tag == Tag.ID:
                 self.match(Tag.ID)
-                id_1 = self.top.get(t)
+                id_ = self.top.get(t)
 
-                if not id_1:
+                if not id_:
                     self.error(f'{t.toString()} undeclared')
 
             self.match(';')
@@ -181,9 +181,9 @@ class Parser:
             self.match(Tag.READ)
             t = self.__look
             self.match(Tag.ID)
-            id_1 = self.top.get(t)
+            id_ = self.top.get(t)
 
-            if not id_1:
+            if not id_:
                 self.error(f'{t.toString()} undeclared')
 
             self.match(';')
@@ -193,7 +193,7 @@ class Parser:
 
         elif self.__look.tag == Tag.RETURN:
             self.match(Tag.RETURN)
-            self.bool_1()
+            self.bool_()
             self.match(';')
 
         else:
@@ -202,48 +202,48 @@ class Parser:
     def assign(self):
         t = self.__look
         self.match(Tag.ID)
-        id_1 = self.top.get(t)
+        id_ = self.top.get(t)
 
-        if not id_1:
+        if not id_:
             self.move()
 
             if self.__look.tag == Tag.NUM:
-                id_1 = Expr(t, NUM)
+                id_ = Expr(t, NUM)
             elif self.__look.tag == Tag.REAL:
-                id_1 = Expr(t, REAL)
+                id_ = Expr(t, REAL)
             elif self.__look.tag == CHAR:
-                id_1 = Expr(t, CHAR)
+                id_ = Expr(t, CHAR)
             elif self.__look.tag in [Tag.TRUE, Tag.FALSE]:
-                id_1 = Expr(t, BOOL)
+                id_ = Expr(t, BOOL)
 
-            self.top.put(t, id_1)
-            y = self.bool_1()
+            self.top.put(t, id_)
+            y = self.bool_()
 
-            if not self.set_check(id_1.type_1, y.type_1):
+            if not self.set_check(id_.type_, y.type_):
                 self.error('type error')
 
             self.match(';')
 
         elif self.__look.tag == '=':
             self.move()
-            y = self.bool_1()
+            y = self.bool_()
 
-            if not self.set_check(id_1.type_1, y.type_1):
+            if not self.set_check(id_.type_, y.type_):
                 self.error('type error')
 
             self.match(';')
 
         else:
-            x = self.offset(id_1)
+            x = self.offset(id_)
             self.match('=')
-            y = self.bool_1()
+            y = self.bool_()
 
-            if not self.set_elemcheck(x.type_1, y.type_1):
+            if not self.set_elemcheck(x.type_, y.type_):
                 self.error('type error')
 
             self.match(';')
 
-    def bool_1(self):
+    def bool_(self):
         x = self.join()
 
         while self.__look.tag == Tag.OR:
@@ -284,9 +284,9 @@ class Parser:
             tok = self.__look
             self.move()
             y = self.expr()
-            type_1 = Type.max(x.type_1, x.type_1, y.type_1)
+            type_ = Type.max(x.type_, x.type_, y.type_)
 
-            if not type_1:
+            if not type_:
                 self.error('type error')
 
             return Expr(tok, BOOL)
@@ -300,9 +300,9 @@ class Parser:
         while self.__look.tag in ['+', '-']:
             self.move()
             y = self.term()
-            type_1 = Type.max(x.type_1, x.type_1, y.type_1)
+            type_ = Type.max(x.type_, x.type_, y.type_)
 
-            if not type_1:
+            if not type_:
                 self.error('type error')
 
         return x
@@ -313,9 +313,9 @@ class Parser:
         while self.__look.tag in ['*', '/']:
             self.move()
             y = self.unary()
-            type_1 = Type.max(x.type_1, x.type_1, y.type_1)
+            type_ = Type.max(x.type_, x.type_, y.type_)
 
-            if not type_1:
+            if not type_:
                 self.error('type error')
 
         return x
@@ -324,9 +324,9 @@ class Parser:
         if self.__look.tag == '-':
             self.move()
             x = self.unary()
-            type_1 = Type.max(x.type_1, NUM, x.type_1)
+            type_ = Type.max(x.type_, NUM, x.type_)
 
-            if not type_1:
+            if not type_:
                 self.error('type error')
 
         elif self.__look.tag == Tag.NOT:
@@ -344,7 +344,7 @@ class Parser:
 
         if self.__look.tag == '(':
             self.move()
-            x = self.bool_1()
+            x = self.bool_()
             self.match(')')
 
             return x
@@ -374,17 +374,17 @@ class Parser:
             return x
 
         elif self.__look.tag == Tag.ID:
-            id_1 = self.top.get(self.__look)
+            id_ = self.top.get(self.__look)
 
-            if not id_1:
+            if not id_:
                 self.error(f'{self.__look.toString()} undeclared')
 
             self.move()
 
             if self.__look.tag != '[':
-                return id_1
+                return id_
             else:
-                return self.offset(id_1)
+                return self.offset(id_)
 
         else:
             self.error(f'syntax error, expected a factor, got "{str(self.__look.tag)}"')
@@ -392,16 +392,16 @@ class Parser:
             return x
 
     def offset(self, a):
-        type_1 = a.type_1
+        type_ = a.type_
         self.match('[')
-        self.bool_1()
+        self.bool_()
         self.match(']')
-        type_1 = type_1.of
+        type_ = type_.of
 
         while self.__look.tag == '[':
             self.match('[')
-            self.bool_1()
+            self.bool_()
             self.match(']')
-            type_1 = type_1.of
+            type_ = type_.of
 
-        return Expr(Word('[]', Tag.INDEX), type_1)
+        return Expr(Word('[]', Tag.INDEX), type_)
