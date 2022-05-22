@@ -1,14 +1,14 @@
 # ProgLang
 
-Syntax analyzer for a custom programming language grammar in Python 3.10.
+A lexical and syntax analyzer for a custom programming language grammar in Python 3.10.
 
 ## Grammar
 
-BNF grammar can be found in `grammar.txt`.
+The BNF grammar can be found in `grammar.txt`.
 
 ## Input Source Code
 
-Input source code can be edited in `lexer/code.txt`.
+The input source code can be edited in `lexer/code.txt`.
 
 ## Instructions
 
