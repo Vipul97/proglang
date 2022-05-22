@@ -1,6 +1,6 @@
 # ProgLang
 
-Syntax Analyzer for a Custom Grammar in Python 3.10.
+Syntax analyzer for a custom programming language grammar in Python 3.10.
 
 ## Grammar
 
@@ -12,7 +12,6 @@ Input source code can be edited in `lexer/code.txt`.
 
 ## Instructions
 
-To run the Syntax Analyzer, run `main.py`.
+To run the syntax analyzer, run `main.py`.
 
-The Syntax Analyzer will not display any output if the program has run successfully, and will display if any errors are
-found.
+The syntax analyzer will run successfully if the program does not display any output, and will display if any errors are found.
