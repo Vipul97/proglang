@@ -1,0 +1,47 @@
+/*
+ProgLang
+	By Vipul Gharde
+*/
+
+DEFINE REAL MAIN()
+BEGIN
+	NUM a; NUM b; BOOL result; REAL[50] arr;
+	PRINT "Welcome to the Sample Program";
+	READ a;
+	b = 5;                // Implicit typing
+	result = FALSE;      // Implicit typing
+
+	WHILE (a < b)
+	BEGIN
+		DO arr[a] = arr[a] + 1.0; WHILE (b > a);
+		IF (a == b)
+		BEGIN
+			PRINT "a is equal to b";
+			b = b + 1;      // Increment b to exit loop
+		END
+		ELSE IF (a < b)
+			a = a + 1;
+		ELSE
+			BREAK;
+
+		arr[a] = a * 2.0;  // Assigning double the value of a to arr[a]
+	END
+
+	RETURN result;        // Return the result
+END
+
+DEFINE BOOL CHECK(NUM num)
+BEGIN
+	IF (num > 0)
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
+END
+
+DEFINE REAL CALCULATE(NUM x, REAL y)
+BEGIN
+	REAL temp;
+	temp = x + y;
+	PRINT "Calculation done!";
+	RETURN temp;          // Returning the result of the calculation
+END

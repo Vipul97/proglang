@@ -1,25 +1,32 @@
-program  ::= func | ε
-func	 ::= DEFINE type id ( decls ) block program
-block	 ::= BEGIN decls stmts END program
-decls	 ::= decls decl | ε
-decl	 ::= type id;
-type	 ::= type [ num ] | basic
-stmts	 ::= stmts stmt | ε
-stmt	 ::= id = bool;
-          |  decls
-          |  IF ( bool ) stmt |  IF ( bool ) stmt ELSE stmt
-          |  WHILE ( bool ) stmt
-          |  DO stmt WHILE ( bool );
-          |  BREAK;
-          |  PRINT lit;
-          |  READ id;
-          |  block
-          |  RETURN bool;
-bool	 ::= bool OR join | join
-join	 ::= join AND equality | equality
-equality ::= equality == rel | equality != rel | rel
-rel	     ::= expr < expr | expr <= expr | expr >= expr | expr > expr | expr
-expr	 ::= expr + term | expr - term | term
-term	 ::= term * unary | term / unary | unary
-unary	 ::= NOT unary | - unary | factor
-factor	 ::= ( bool ) | id | num | real | true | false
+program    ::= decls stmts
+block      ::= BEGIN decls stmts END
+decls      ::= decls decl | ε
+decl       ::= type ID ; | func
+func       ::= DEFINE type ID ( params ) block
+type       ::= type [ NUM ] | NUM | CHAR | BOOL | REAL
+params     ::= param_list | ε
+param_list ::= param_list , param | param
+param      ::= type ID
+stmts      ::= stmts stmt | ε
+stmt       ::= loc = bool ;
+            |  IF ( bool ) stmt
+            |  IF ( bool ) stmt ELSE stmt
+            |  WHILE ( bool ) stmt
+            |  DO stmt WHILE ( bool ) ;
+            |  BREAK ;
+            |  PRINT STRING ;
+            |  READ ID ;
+            |  block
+            |  RETURN bool ;
+            |  call_stmt
+call_stmt  ::= ID ( arg_list ) ;
+arg_list   ::= arg_list , bool | bool | ε
+loc        ::= loc [ bool ] | ID
+bool       ::= bool OR join | join
+join       ::= join AND equality | equality
+equality   ::= equality == rel | equality != rel | rel
+rel        ::= expr < expr | expr <= expr | expr >= expr | expr > expr | expr
+expr       ::= expr + term | expr - term | term
+term       ::= term * unary | term / unary | unary
+unary      ::= NOT unary | - unary | factor
+factor     ::= ( bool ) | loc | NUM | REAL | TRUE | FALSE | STRING
